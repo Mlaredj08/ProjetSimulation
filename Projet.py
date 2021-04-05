@@ -118,18 +118,18 @@ cax1 = div1.append_axes('right', '3%', '3%')
 ax1.set_aspect(1)
 ax1.set_xlim([x_min,x_max])
 ax1.set_ylim([y_min,y_max])
-ax1.set_xlabel(r"x ($a_0$)", fontsize = 16)
-ax1.set_ylabel(r"y ($a_0$)", fontsize = 16)
+ax1.set_xlabel(r"x  ", fontsize = 16)
+ax1.set_ylabel(r"y  ", fontsize = 16)
 
 ax2.view_init(elev=40., azim=-25.)
 ax2.set_aspect('auto')
 ax2.set_xlim([x_min,x_max])
 ax2.set_ylim([y_min,y_max])
-ax2.set_xlabel(r"x ($a_0$)", fontsize = 9)
-ax2.set_ylabel(r"y ($a_0$)", fontsize = 9)
+ax2.set_xlabel(r"x  ", fontsize = 9)
+ax2.set_ylabel(r"y  ", fontsize = 9)
 
 ax3.set_xlim([y_min, y_max])
-ax3.set_xlabel(r"y ($a_0$)", fontsize = 9)
+ax3.set_xlabel(r"y  ", fontsize = 9)
 ax3.set_ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
 
 #graphique initial
@@ -195,14 +195,14 @@ def animate(i):
     #Premier graphe
     level = np.linspace(0,proba.max(),nbr_level)
     cset = ax1.contourf(xx, yy, proba, levels=level, cmap=plt.cm.jet,zorder=1)
-    ax1.set_xlabel(r"x ($a_0$)", fontsize = 16)
-    ax1.set_ylabel(r"y ($a_0$)", fontsize = 16)
+    ax1.set_xlabel(r"x  ", fontsize = 16)
+    ax1.set_ylabel(r"y  ", fontsize = 16)
     #Deuxieme graphe
     zi = griddata((xx.reshape(size_x*size_y), yy.reshape(size_x*size_y)), proba.reshape(size_x*size_y), (x_axis[None,:], y_axis[:,None]), method='cubic')
     ax2.plot_surface(X, Y, zi, cmap=plt.cm.jet, rcount=N, ccount=N, alpha=0.95)
     ax2.set_zlim([0,zi.max()])
-    ax2.set_xlabel(r"x ($a_0$)", fontsize = 9)
-    ax2.set_ylabel(r"y ($a_0$)", fontsize = 9)
+    ax2.set_xlabel(r"x  ", fontsize = 9)
+    ax2.set_ylabel(r"y  ", fontsize = 9)
     ax2.set_xlim([x_min,x_max])
     ax2.set_ylim([y_min,y_max])
     #ax2.grid(False)
@@ -210,7 +210,7 @@ def animate(i):
     ax3.plot(yy[:,k],proba[:,k])
     ax3.set_xlim([y_min, y_max])
     ax3.set_ylim([0, 0.23])
-    ax3.set_xlabel(r"y ($a_0$)", fontsize = 9)
+    ax3.set_xlabel(r"y  ", fontsize = 9)
     ax3.set_ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
 
     #Dessiner la barriere des fentes
@@ -271,16 +271,21 @@ plt.show()
 
 ########### Cette partie du script évalue l'impact des parametres 
 ########### de l'experience de Young sur l'intensité reçu à l'ecran
-########### !!!!!! Afin de bien simuler l'experience une mise à l'échelle et appliquée !!!!!!!
-
-slit_width = (yf1-y0m)*(10**-7)
+########### !!!!!! Afin de bien simuler l'experience une mise à l'échelle est appliquée !!!!!!!
+Y = np.arange(-0.005,0.005,0.00001)
+slit_width = (y02-yfm)*(10**-4)
 screen_distance = scr_distance*(10**-1)
 distance_between_slits= (yfm-y0m)*10**-3
 
-Y = ut.double_fentes_intensite(slit_width, wavelength, screen_distance, distance_between_slits, X)
-plot, = plt.plot(X,Y)
+Intensity = ut.double_fentes_intensite(slit_width, wavelength, screen_distance, distance_between_slits, Y)
+#Crer la figure
+fig2 = plt.figure(figsize=(11,8))
+plot, = plt.plot(Y,Intensity)
 plt.xlabel("Distance from center")
 plt.ylabel("Intensity")
+
+
+
 
 axis=(plt.axes([0.75, 0.75, 0.14, 0.05]))
 axis2 = (plt.axes([0.75,0.65, 0.14, 0.05]))
