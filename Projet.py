@@ -98,8 +98,9 @@ psi_0 = ut.gauss_pqt(xx, yy, delta_x, delta_y, x0, y0, kx0, ky0).transpose().res
 wave_fct = WaveFunction(x=x, y=y, psi_0=psi_0, V=V, dt=dt, hbar=hbar,m=m)
 wave_fct.psi = wave_fct.psi/wave_fct.compute_norm()
 
-#Calculer la mémoire utilisée
-mem=wave_fct.mem/1024
+#### Claculer mémoire
+mem=8*((2*x_max/dx)*(2*y_max/dy))**2
+
 
 
 ######################################
@@ -110,7 +111,7 @@ mem=wave_fct.mem/1024
 nb_frame = 300
 nbr_level = 200
 
-#Crer la figure
+#Créer la figure
 fig = plt.figure(figsize=(11,8))
 gs = gridspec.GridSpec(3, 3, width_ratios=[1,1,1.5], height_ratios=[1,0.1,1])
 ax1 = plt.subplot(gs[:,:-1])
@@ -170,7 +171,7 @@ ax2.plot([x0m,xfm,xfm,x0m,x0m], [y0m,y0m,yfm,yfm,y0m], z_i*np.ones(5), color='k'
 #Troisieme graphique
 scr_distance = x_max/2
 k = abs(x-scr_distance).argmin()
-ax3.plot(yy[:,k],proba[:,k])
+ax3.plot(yy[:,0],proba[:,0])
 #ax3.set_ylim([0, proba[:,k].max()+0.01])
 ax3.set_ylim([0, 0.23])
 ax1.vlines(x[k], y_min, y_max, colors='orange', linestyle='dashed', zorder=2)
@@ -185,12 +186,21 @@ cbar1.set_ticklabels(ticks)
 t_vec = np.arange(0,nb_frame*dt,dt)
 coupe = np.zeros((nb_frame,len(proba[:,k])))
 
+# Créer la figure
+fig2 = plt.figure(figsize=(11,8))
+plt.plot(yy[:,0],proba[:,0])
+# np.set_xlim([y_min, y_max])
+# np.set_ylim([0, 0.23])
+plt.xlabel(r"y ($a_0$)", fontsize = 9)
+plt.ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
+
 #Creer l'animation
 def animate(i):
     t = t_vec[i]
     wave_fct.step()
     proba = wave_fct.get_prob().reshape(size_x,size_y).transpose()
     coupe[i] = proba[:,k]
+    
 
     ax1.clear()
     ax2.clear()
@@ -217,6 +227,7 @@ def animate(i):
     ax3.set_ylim([0, 0.23])
     ax3.set_xlabel(r"y ($a_0$)", fontsize = 9)
     ax3.set_ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
+    
 
     #Dessiner la barriere des fentes
     ax1.text(0.02, 0.92, r"t = {0:.3f} s".format(wave_fct.t), color='white', transform=ax1.transAxes, fontsize=12)
@@ -266,12 +277,14 @@ def print_update():
     compteur += 1
     while rapport==1:
         break
+    print('Memoire utilisé : ', mem/1024)
 start_time = time.time()
 interval = 0.001
 plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 anim = animation.FuncAnimation(fig,animate,nb_frame,interval=interval*1e+3,blit=False, repeat=False)
 writer = animation.PillowWriter(fps=FPS)
 anim.save('2D_2slit_dx={0}_dt={1}_yf1={2}_k={3}.gif'.format(dx,dt,abs(yf1),kx0), writer=writer)
-print('Memoire utilisé : ', mem)
+
+
 plt.show()
 

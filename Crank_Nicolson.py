@@ -135,7 +135,7 @@ class WaveFunction(object):
                     k += 1
 
         self.Mat2 = sparse.coo_matrix((K,(I,J)),shape=(dimension,dimension)).tocsc()
-        self.mem=8*((x/dx)*(y/dy))**2
+        
 
     def get_prob(self):
         return (abs(self.psi))**2
@@ -149,3 +149,5 @@ class WaveFunction(object):
 
         #Mettre à jour le temps
         self.t += self.dt
+
+    
