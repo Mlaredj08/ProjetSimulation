@@ -15,7 +15,7 @@ class WaveFunction(object):
         self.hbar = hbar
         self.m = m
         self.t = t0
-
+        
         alpha = dt/(4*self.dx**2)
         self.alpha = alpha
         self.size_x = len(x)
@@ -28,7 +28,7 @@ class WaveFunction(object):
         I = np.zeros(size)
         J = np.zeros(size)
         K = np.zeros(size, dtype=np.complex128)
-
+        
         k = 0
         for i in range(0,self.size_y):
             for j in range(0,self.size_x):
@@ -135,7 +135,7 @@ class WaveFunction(object):
                     k += 1
 
         self.Mat2 = sparse.coo_matrix((K,(I,J)),shape=(dimension,dimension)).tocsc()
-
+        self.mem=8*((x/dx)*(y/dy))**2
 
     def get_prob(self):
         return (abs(self.psi))**2

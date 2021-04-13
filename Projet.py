@@ -21,7 +21,7 @@ plt.rcParams.update({'font.size': 7})
 #       Creer le systeme        #
 #####################################
 # specifier temps, steps et duration
-dt = 0.005
+dt = 0.005  ##### Modifier cette ligne pour changer le pas de temps
 wavelength = 500e-9
 FPS=30
 start_time = 0
@@ -35,7 +35,7 @@ m = 9.10938356e-31      # particle mass
 # spécifier un axe en coordonnées x
 x_min = -12
 x_max = 12
-dx = 0.08
+dx = 0.08  ### Modifier cette ligne pour le changer le pas d'espace. À noter que dx =dy
 x = np.arange(x_min, x_max+dx, dx)
 
 # spécifier un axe en coordonnées y
@@ -58,13 +58,14 @@ V_Wall = 1e10
 x01 = 0
 xf1 = 0.3 # épaisseur de la barrière
 y01 = y.min()
-yf1 = -1.5 # taille de la fente = 2*|yf1|
+yf1 = -1.5 # taille de la fente = 2*|yf1| Pour une seule fente### pour deux fentes la taille est :|yf1-y0m|
 
+####Commenter ces lignes (jusqu'à yfm) pour avoir une seule fente
 #Pour créer une deuxième fente
 x0m = x01
 xfm = xf1
 y0m = -0.5
-yfm = 0.5
+yfm = -y0m
 
 #Partie haute de la barriere
 x02 = x01
@@ -97,6 +98,10 @@ psi_0 = ut.gauss_pqt(xx, yy, delta_x, delta_y, x0, y0, kx0, ky0).transpose().res
 wave_fct = WaveFunction(x=x, y=y, psi_0=psi_0, V=V, dt=dt, hbar=hbar,m=m)
 wave_fct.psi = wave_fct.psi/wave_fct.compute_norm()
 
+#Calculer la mémoire utilisée
+mem=wave_fct.mem/1024
+
+
 ######################################
 #    Mise en place de graphiques     #
 ######################################
@@ -118,18 +123,18 @@ cax1 = div1.append_axes('right', '3%', '3%')
 ax1.set_aspect(1)
 ax1.set_xlim([x_min,x_max])
 ax1.set_ylim([y_min,y_max])
-ax1.set_xlabel(r"x  ", fontsize = 16)
-ax1.set_ylabel(r"y  ", fontsize = 16)
+ax1.set_xlabel(r"x ($a_0$)", fontsize = 16)
+ax1.set_ylabel(r"y ($a_0$)", fontsize = 16)
 
 ax2.view_init(elev=40., azim=-25.)
 ax2.set_aspect('auto')
 ax2.set_xlim([x_min,x_max])
 ax2.set_ylim([y_min,y_max])
-ax2.set_xlabel(r"x  ", fontsize = 9)
-ax2.set_ylabel(r"y  ", fontsize = 9)
+ax2.set_xlabel(r"x ($a_0$)", fontsize = 9)
+ax2.set_ylabel(r"y ($a_0$)", fontsize = 9)
 
 ax3.set_xlim([y_min, y_max])
-ax3.set_xlabel(r"y  ", fontsize = 9)
+ax3.set_xlabel(r"y ($a_0$)", fontsize = 9)
 ax3.set_ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
 
 #graphique initial
@@ -195,14 +200,14 @@ def animate(i):
     #Premier graphe
     level = np.linspace(0,proba.max(),nbr_level)
     cset = ax1.contourf(xx, yy, proba, levels=level, cmap=plt.cm.jet,zorder=1)
-    ax1.set_xlabel(r"x  ", fontsize = 16)
-    ax1.set_ylabel(r"y  ", fontsize = 16)
+    ax1.set_xlabel(r"x ($a_0$)", fontsize = 16)
+    ax1.set_ylabel(r"y ($a_0$)", fontsize = 16)
     #Deuxieme graphe
     zi = griddata((xx.reshape(size_x*size_y), yy.reshape(size_x*size_y)), proba.reshape(size_x*size_y), (x_axis[None,:], y_axis[:,None]), method='cubic')
     ax2.plot_surface(X, Y, zi, cmap=plt.cm.jet, rcount=N, ccount=N, alpha=0.95)
     ax2.set_zlim([0,zi.max()])
-    ax2.set_xlabel(r"x  ", fontsize = 9)
-    ax2.set_ylabel(r"y  ", fontsize = 9)
+    ax2.set_xlabel(r"x ($a_0$)", fontsize = 9)
+    ax2.set_ylabel(r"y ($a_0$)", fontsize = 9)
     ax2.set_xlim([x_min,x_max])
     ax2.set_ylim([y_min,y_max])
     #ax2.grid(False)
@@ -210,7 +215,7 @@ def animate(i):
     ax3.plot(yy[:,k],proba[:,k])
     ax3.set_xlim([y_min, y_max])
     ax3.set_ylim([0, 0.23])
-    ax3.set_xlabel(r"y  ", fontsize = 9)
+    ax3.set_xlabel(r"y ($a_0$)", fontsize = 9)
     ax3.set_ylabel(r"$|\psi(y,t)|^2$", fontsize = 9)
 
     #Dessiner la barriere des fentes
@@ -267,47 +272,6 @@ plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 anim = animation.FuncAnimation(fig,animate,nb_frame,interval=interval*1e+3,blit=False, repeat=False)
 writer = animation.PillowWriter(fps=FPS)
 anim.save('2D_2slit_dx={0}_dt={1}_yf1={2}_k={3}.gif'.format(dx,dt,abs(yf1),kx0), writer=writer)
+print('Memoire utilisé : ', mem)
 plt.show()
 
-########### Cette partie du script évalue l'impact des parametres 
-########### de l'experience de Young sur l'intensité reçu à l'ecran
-########### !!!!!! Afin de bien simuler l'experience une mise à l'échelle est appliquée !!!!!!!
-Y = np.arange(-0.005,0.005,0.00001)
-slit_width = (y02-yfm)*(10**-4)
-screen_distance = scr_distance*(10**-1)
-distance_between_slits= (yfm-y0m)*10**-3
-
-Intensity = ut.double_fentes_intensite(slit_width, wavelength, screen_distance, distance_between_slits, Y)
-#Crer la figure
-fig2 = plt.figure(figsize=(11,8))
-plot, = plt.plot(Y,Intensity)
-plt.xlabel("Distance from center")
-plt.ylabel("Intensity")
-
-
-
-
-axis=(plt.axes([0.75, 0.75, 0.14, 0.05]))
-axis2 = (plt.axes([0.75,0.65, 0.14, 0.05]))
-axis3 = (plt.axes([0.75,0.55, 0.14, 0.05]))
-axis4 = (plt.axes([0.75,0.45, 0.14, 0.05]))
-
-wavelength_slider = Slider(axis,'Wavelength(nm)',100, 1000,valinit=wavelength*10**9)
-slit_width_slider = Slider(axis2, "Slit Width(micrometers)", 10, 1000, valinit=slit_width*10**6)
-screen_distance_slider = Slider(axis3, "Screen Distance(cm)", 10, 100, valinit= screen_distance*10**2)
-distance_between_slits_slider = Slider(axis4, "Distance b/w slits(mm)", 0.1, 10, valinit=distance_between_slits*10**3) 
-
-def update(val) :
-  wavelength = wavelength_slider.val*(10**-9)
-  slit_width = slit_width_slider.val*(10**-6)
-  screen_distance = screen_distance_slider.val*(10**-2)
-  distance_between_slits = distance_between_slits_slider.val*(10**-3)
-  Y = ut.double_fentes_intensite(slit_width, wavelength, screen_distance, distance_between_slits, X)
-  plot.set_ydata(Y)
-
-wavelength_slider.on_changed(update)
-slit_width_slider.on_changed(update)
-screen_distance_slider.on_changed(update)
-distance_between_slits_slider.on_changed(update)
-
-plt.show()
