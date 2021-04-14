@@ -58,14 +58,14 @@ V_Wall = 1e10
 x01 = 0
 xf1 = 0.3 # épaisseur de la barrière
 y01 = y.min()
-yf1 = -1.5 # taille de la fente = 2*|yf1| Pour une seule fente### pour deux fentes la taille est :|yf1-y0m|
+yf1 = -0.5 # taille de la fente = 2*|yf1| Pour une seule fente### pour deux fentes la taille est :|yf1-y0m|
 
 ####Commenter ces lignes (jusqu'à yfm) pour avoir une seule fente
 #Pour créer une deuxième fente
-x0m = x01
-xfm = xf1
-y0m = -0.5
-yfm = -y0m
+# x0m = x01
+# xfm = xf1
+# y0m = -0.5
+# yfm = -y0m
 
 #Partie haute de la barriere
 x02 = x01
@@ -75,7 +75,7 @@ yf2 = y.max()
 
 # en cas d'une deuxième fente décommenter (la partie commentée du potentiel V)
 
-V = ut.potentiel_heaviside(V_Wall,x01,xf1,y01,yf1,x,y) + ut.potentiel_heaviside(V_Wall,x02,xf2,y02,yf2,x,y) + ut.potentiel_heaviside(V_Wall,x0m,xfm,y0m,yfm,x,y)
+V = ut.potentiel_heaviside(V_Wall,x01,xf1,y01,yf1,x,y) + ut.potentiel_heaviside(V_Wall,x02,xf2,y02,yf2,x,y)# + ut.potentiel_heaviside(V_Wall,x0m,xfm,y0m,yfm,x,y)
 
 #V = np.zeros(len(x)*len(y))
 
@@ -153,10 +153,10 @@ ax1.vlines(x02, y02, yf2, colors='white', zorder=2)
 ax1.vlines(xf2, y02, yf2, colors='white', zorder=2)
 ax1.hlines(yf1, x01, xf1, colors='white', zorder=2)
 ax1.hlines(y02, x01, xf1, colors='white', zorder=2)
-ax1.hlines(y0m, x0m, xfm, colors='white', zorder=2)
-ax1.hlines(yfm, x0m, xfm, colors='white', zorder=2)
-ax1.vlines(x0m, y0m, yfm, colors='white', zorder=2)
-ax1.vlines(xfm, y0m, yfm, colors='white', zorder=2)
+# ax1.hlines(y0m, x0m, xfm, colors='white', zorder=2)
+# ax1.hlines(yfm, x0m, xfm, colors='white', zorder=2)
+# ax1.vlines(x0m, y0m, yfm, colors='white', zorder=2)
+# ax1.vlines(xfm, y0m, yfm, colors='white', zorder=2)
 
 # Deuxieme graphique
 zi = griddata((xx.reshape(size_x*size_y), yy.reshape(size_x*size_y)), proba.reshape(size_x*size_y), (x_axis[None,:], y_axis[:,None]), method='cubic')
@@ -166,7 +166,7 @@ ax2.plot_surface(X, Y, zi, cmap=plt.cm.jet, rcount=N, ccount=N, alpha=0.95)
 z_i = 0.0
 ax2.plot([x01,xf1,xf1,x01,x01], [y01,y01,yf1,yf1,y01], z_i*np.ones(5), color='k', linewidth=2, zorder=2, alpha=1.)
 ax2.plot([x02,xf2,xf2,x02,x02], [y02,y02,yf2,yf2,y02], z_i*np.ones(5), color='k', linewidth=2, zorder=2, alpha=1.)
-ax2.plot([x0m,xfm,xfm,x0m,x0m], [y0m,y0m,yfm,yfm,y0m], z_i*np.ones(5), color='k', linewidth=2, zorder=2, alpha=1.)
+# ax2.plot([x0m,xfm,xfm,x0m,x0m], [y0m,y0m,yfm,yfm,y0m], z_i*np.ones(5), color='k', linewidth=2, zorder=2, alpha=1.)
 
 #Troisieme graphique
 scr_distance = x_max/2
@@ -237,13 +237,13 @@ def animate(i):
     ax1.vlines(xf2, y02, yf2, colors='white', zorder=2)
     ax1.hlines(yf1, x01, xf1, colors='white', zorder=2)
     ax1.hlines(y02, x01, xf1, colors='white', zorder=2)
-    ax1.vlines(x0m, y0m, yfm, colors='white', zorder=2)
-    ax1.vlines(xfm, y0m, yfm, colors='white', zorder=2)
-    ax1.hlines(y0m, x0m, xfm, colors='white', zorder=2)
-    ax1.hlines(yfm, x0m, xfm, colors='white', zorder=2)
+    # ax1.vlines(x0m, y0m, yfm, colors='white', zorder=2)
+    # ax1.vlines(xfm, y0m, yfm, colors='white', zorder=2)
+    # ax1.hlines(y0m, x0m, xfm, colors='white', zorder=2)
+    # ax1.hlines(yfm, x0m, xfm, colors='white', zorder=2)
     ax2.plot([x01,xf1,xf1,x01,x01], [y01,y01,yf1,yf1,y01], z_i*np.ones(5), color='k', linewidth=1, zorder=2, alpha=1.)
     ax2.plot([x02,xf2,xf2,x02,x02], [y02,y02,yf2,yf2,y02], z_i*np.ones(5), color='k', linewidth=1, zorder=2, alpha=1.)
-    ax2.plot([x0m,xfm,xfm,x0m,x0m], [y0m,y0m,yfm,yfm,y0m], z_i*np.ones(5), color='k', linewidth=1, zorder=2, alpha=1.)
+    # ax2.plot([x0m,xfm,xfm,x0m,x0m], [y0m,y0m,yfm,yfm,y0m], z_i*np.ones(5), color='k', linewidth=1, zorder=2, alpha=1.)
     ax1.vlines(x[k], y_min, y_max, colors='orange', linestyle='dashed', zorder=2)
 
     #Adjuster la colorbar
